@@ -6,7 +6,7 @@ export default function LaunchPage() {
   const navigate = useNavigate()
   const [step, setStep] = useState(1)
   const [formData, setFormData] = useState({
-    name: '',
+    businessName: '',
     companyName: '',
     description: '',
     industry: '',
@@ -20,7 +20,9 @@ export default function LaunchPage() {
     e.preventDefault()
     try {
       const response = await axios.post('http://localhost:3000/onboard', {
-        name: formData.name,
+        id: undefined,
+        name: formData.businessName,
+        businessName: formData.businessName,
         companyName: formData.companyName,
         description: formData.description,
         industry: formData.industry,
@@ -90,8 +92,8 @@ export default function LaunchPage() {
                   </label>
                   <input
                     type="text"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    value={formData.businessName}
+                    onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                     placeholder="Enter your business name"
                     required
@@ -134,8 +136,8 @@ export default function LaunchPage() {
                   </label>
                   <input
                     type="text"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    value={formData.businessName}
+                    onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                     placeholder="Enter product name"
                     required
