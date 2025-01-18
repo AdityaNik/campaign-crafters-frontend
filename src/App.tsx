@@ -5,6 +5,7 @@ import CampaignRecommendationsPage from './pages/CampaignRecommendationsPage'
 import geniusAiLogo from './assets/geniusAI.png'
 import AdCreationPage from './pages/AdCreationPage'
 import AnalyticsPage from './pages/AnalyticsPage'
+import SuccessPage from './pages/SuccessPage'
 
 function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -112,6 +113,7 @@ function App() {
         <Route path="/launch" element={<LaunchPage />} />
         <Route path="/recommendations" element={<CampaignRecommendationsPage />} />
         <Route path="/create-ad" element={<AdCreationPage />} />
+        <Route path="/success" element={<SuccessPage />} />
         <Route path="/analytics" element={<AnalyticsPage />} />
       </Routes>
     </Router>
