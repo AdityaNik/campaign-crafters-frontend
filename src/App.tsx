@@ -6,6 +6,10 @@ import geniusAiLogo from './assets/geniusAI.png'
 import AdCreationPage from './pages/AdCreationPage'
 import AnalyticsPage from './pages/AnalyticsPage'
 import SuccessPage from './pages/SuccessPage'
+import GoogleAdCreation from './pages/GoogleAdCreation'
+import RedditAdCreation from './pages/RedditAdCreation'
+import TwitterAdCreation from './pages/TwitterAdCreation'
+import WhatsAppAdCreation from './pages/WhatsAppAdCreation'
 
 function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -113,6 +117,10 @@ function App() {
         <Route path="/launch" element={<LaunchPage />} />
         <Route path="/recommendations" element={<CampaignRecommendationsPage />} />
         <Route path="/create-ad" element={<AdCreationPage />} />
+        <Route path="/google-ad" element={<GoogleAdCreation />} />
+        <Route path="/reddit-ad" element={<RedditAdCreation />} />
+        <Route path="/twitter-ad" element={<TwitterAdCreation />} />
+        <Route path="/whatsapp-ad" element={<WhatsAppAdCreation />} />
         <Route path="/success" element={<SuccessPage />} />
         <Route path="/analytics" element={<AnalyticsPage />} />
       </Routes>
