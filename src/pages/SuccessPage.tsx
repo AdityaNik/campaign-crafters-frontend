@@ -1,9 +1,37 @@
+import axios from 'axios'
+import { useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 
 export default function SuccessPage() {
   const navigate = useNavigate()
   const location = useLocation()
   const platform = location.state?.platform || 'selected platform'
+  const businessId = location.state?.businessId
+
+  useEffect(() => {
+    if (!businessId) {
+      navigate('/whatsapp-ad');
+      return
+    }
+
+    const sendMessage = async () => {
+      try {
+        await axios.post('http://localhost:3000/gen_hook/sendWhatsappMsg', {
+          id_b: businessId,
+        })
+
+        alert('Advertisement published successfully! Message sent to user.')
+
+      } catch (error) {
+        console.error('Error sending message:', error)
+      }
+    }
+
+    sendMessage();
+
+
+
+  }, [])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-primary-50 to-primary-100">
