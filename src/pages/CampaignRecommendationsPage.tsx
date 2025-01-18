@@ -17,6 +17,7 @@ export default function CampaignRecommendationsPage() {
         })
         
         const strategyText = response.data.candidates[0].content.parts[0].text
+        console.log(strategyText)
         setStrategy(strategyText)
       } catch (error) {
         console.error('Error fetching strategy:', error)

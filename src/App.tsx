@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom'
 import LaunchPage from './pages/LaunchPage'
 import CampaignRecommendationsPage from './pages/CampaignRecommendationsPage'
-import geniusAiLogo from './assets/geniusAi.png'
+import geniusAiLogo from './assets/geniusAI.png'
 import AdCreationPage from './pages/AdCreationPage'
 import AnalyticsPage from './pages/AnalyticsPage'
 

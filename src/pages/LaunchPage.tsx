@@ -7,7 +7,8 @@ export default function LaunchPage() {
   const [step, setStep] = useState(1)
   const [formData, setFormData] = useState({
     businessName: '',
-    companyName: '',
+    productName: '',
+    email: '',
     description: '',
     industry: '',
     websiteUrl: '',
@@ -21,9 +22,9 @@ export default function LaunchPage() {
     try {
       const response = await axios.post('http://localhost:3000/onboard', {
         id: undefined,
-        name: formData.businessName,
         businessName: formData.businessName,
-        companyName: formData.companyName,
+        productName: formData.productName,
+        email: formData.email,
         description: formData.description,
         industry: formData.industry,
         websiteUrl: formData.websiteUrl,
@@ -106,14 +107,14 @@ export default function LaunchPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Company Name
+                    Email
                   </label>
                   <input
                     type="text"
-                    value={formData.companyName}
-                    onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                    placeholder="Enter company name"
+                    placeholder="Enter company email"
                     required
                   />
                 </div>
@@ -141,8 +142,8 @@ export default function LaunchPage() {
                   </label>
                   <input
                     type="text"
-                    value={formData.businessName}
-                    onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
+                    value={formData.productName}
+                    onChange={(e) => setFormData({ ...formData, productName: e.target.value })}
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                     placeholder="Enter product name"
                     required
