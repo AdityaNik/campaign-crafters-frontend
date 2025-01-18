@@ -1,28 +1,42 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
 
 export default function LaunchPage() {
   const navigate = useNavigate()
   const [step, setStep] = useState(1)
   const [formData, setFormData] = useState({
+    name: '',
     companyName: '',
-    website: '',
-    productName: '',
     description: '',
-    targetAudience: {
-      ageRange: '',
-      location: '',
-      interests: '',
-      demographics: ''
-    },
-    budget: '',
-    goals: '',
-    timeline: ''
+    industry: '',
+    websiteUrl: '',
+    targetLocation: '',
+    targetAge: '',
+    budget: 0
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    navigate('/recommendations', { state: formData })
+    try {
+      const response = await axios.post('http://localhost:3000/onboard', {
+        name: formData.name,
+        companyName: formData.companyName,
+        description: formData.description,
+        industry: formData.industry,
+        websiteUrl: formData.websiteUrl,
+        targetLocation: formData.targetLocation,
+        targetAge: formData.targetAge,
+        budget: parseFloat(formData.budget.toString())
+      })
+
+      console.log('Onboarding successful:', response.data)
+      alert('Business data stored successfully!')
+      navigate('/recommendations', { state: formData })
+    } catch (error) {
+      console.error('Error submitting form:', error)
+      alert('Error storing data. Please try again.')
+    }
   }
 
   return (
@@ -72,14 +86,27 @@ export default function LaunchPage() {
               <div className="space-y-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Business Name
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    placeholder="Enter your business name"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Company Name
                   </label>
                   <input
                     type="text"
                     value={formData.companyName}
                     onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
-                    placeholder="Enter your company name"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    placeholder="Enter company name"
                     required
                   />
                 </div>
@@ -89,8 +116,8 @@ export default function LaunchPage() {
                   </label>
                   <input
                     type="url"
-                    value={formData.website}
-                    onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                    value={formData.websiteUrl}
+                    onChange={(e) => setFormData({ ...formData, websiteUrl: e.target.value })}
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
                     placeholder="https://example.com"
                     required
@@ -107,9 +134,9 @@ export default function LaunchPage() {
                   </label>
                   <input
                     type="text"
-                    value={formData.productName}
-                    onChange={(e) => setFormData({ ...formData, productName: e.target.value })}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                     placeholder="Enter product name"
                     required
                   />
@@ -127,6 +154,26 @@ export default function LaunchPage() {
                     required
                   />
                 </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Industry
+                  </label>
+                  <select
+                    value={formData.industry}
+                    onChange={(e) => setFormData({ ...formData, industry: e.target.value })}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
+                    required
+                  >
+                    <option value="">Select Industry</option>
+                    <option value="Technology">Technology</option>
+                    <option value="Retail">Retail</option>
+                    <option value="Healthcare">Healthcare</option>
+                    <option value="Finance">Finance</option>
+                    <option value="Education">Education</option>
+                    <option value="Manufacturing">Manufacturing</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
               </div>
             )}
 
@@ -139,13 +186,8 @@ export default function LaunchPage() {
                     </label>
                     <input
                       type="text"
-                      value={formData.targetAudience.ageRange}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          targetAudience: { ...formData.targetAudience, ageRange: e.target.value }
-                        })
-                      }
+                      value={formData.targetAge}
+                      onChange={(e) => setFormData({ ...formData, targetAge: e.target.value })}
                       className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
                       placeholder="e.g., 18-35"
                       required
@@ -157,13 +199,8 @@ export default function LaunchPage() {
                     </label>
                     <input
                       type="text"
-                      value={formData.targetAudience.location}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          targetAudience: { ...formData.targetAudience, location: e.target.value }
-                        })
-                      }
+                      value={formData.targetLocation}
+                      onChange={(e) => setFormData({ ...formData, targetLocation: e.target.value })}
                       className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
                       placeholder="e.g., India"
                       required
@@ -175,24 +212,13 @@ export default function LaunchPage() {
                     Campaign Budget
                   </label>
                   <input
-                    type="text"
+                    type="number"
                     value={formData.budget}
-                    onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
+                    onChange={(e) => setFormData({ ...formData, budget: parseFloat(e.target.value) || 0 })}
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
                     placeholder="Enter your budget"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Campaign Goals
-                  </label>
-                  <textarea
-                    value={formData.goals}
-                    onChange={(e) => setFormData({ ...formData, goals: e.target.value })}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
-                    rows={3}
-                    placeholder="Describe your campaign goals"
+                    min="0"
+                    step="100"
                     required
                   />
                 </div>
