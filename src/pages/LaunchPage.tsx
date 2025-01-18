@@ -34,7 +34,12 @@ export default function LaunchPage() {
 
       console.log('Onboarding successful:', response.data)
       alert('Business data stored successfully!')
-      navigate('/recommendations', { state: formData })
+      navigate('/recommendations', { 
+        state: { 
+          formData,
+          businessId: response.data.data.id 
+        }
+      })
     } catch (error) {
       console.error('Error submitting form:', error)
       alert('Error storing data. Please try again.')
