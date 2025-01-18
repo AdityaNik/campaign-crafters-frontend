@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import protin from '../assets/protin.jpg'
 import proteinn from '../assets/proteinn.png'
+import axios from 'axios'
 
 interface WhatsAppAd {
   messageText: string;
@@ -10,57 +11,145 @@ interface WhatsAppAd {
   businessName: string;
 }
 
+interface HookResponse {
+  result: {
+    id: number;
+    businessId: number;
+    reditString: string;
+    whatsappString: string;
+    twitterString: string;
+    startDate: string;
+    createdAt: string;
+  }
+}
+
 export default function WhatsAppAdCreation() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const businessId = location.state?.businessId
+  
   const [loading, setLoading] = useState(true)
   const [generatedAds, setGeneratedAds] = useState<WhatsAppAd[]>([])
+  const [adStrings, setAdStrings] = useState<HookResponse | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    const generateWhatsAppAds = () => {
-      const mockAds: WhatsAppAd[] = [
-        {
-          businessName: "FitLife Supplements",
-          messageText: "🌟 Special Offer Alert! 🌟\n\nIntroducing our Premium Whey Protein:\n✅ 24g protein per serving\n✅ Zero artificial additives\n✅ Perfect for pre/post workout\n✅ Scientifically formulated\n\nLimited Time Offer: Get 20% OFF on your first order! 🎉",
-          mediaUrl: "https://cdn.vectorstock.com/i/1000v/03/31/whey-protein-powder-ad-poster-vector-47880331.jpg",
-          callToAction: "Shop Now 🛍️"
-        },
-        {
-          businessName: "ProFit Nutrition",
-          messageText: "💪 BULK UP WITH THE BEST! 💪\n\nPremium Gold Standard Whey:\n✨ 30g protein per scoop\n✨ Muscle recovery formula\n✨ Delicious flavors\n✨ Lab tested quality\n\nEarly Bird Offer: Buy 2 Get 1 Free! 🎊",
-          mediaUrl: protin,
-          callToAction: "Order Now 🏃‍♂️"
-        },
-        {
-          businessName: "Elite Supplements",
-          messageText: "🏆 PREMIUM PROTEIN POWDER 🏆\n\nLevel Up Your Gains:\n⚡️ Fast absorption formula\n⚡️ Added BCAAs & Glutamine\n⚡️ 100% pure whey isolate\n⚡️ Sugar-free formula\n\nExclusive Deal: 30% OFF Today! 💫",
-          mediaUrl: proteinn,
-          callToAction: "Get Yours 💪"
-        }
-      ]
-
-      setTimeout(() => {
-        setGeneratedAds(mockAds)
+    const fetchAdStrings = async () => {
+      if (!businessId) {
+        setError('No business ID provided')
         setLoading(false)
-      }, 1500)
+        return
+      }
+
+      try {
+        const response = await axios.post<HookResponse>('http://localhost:3000/gen_hook', {
+          id_b: businessId
+        })
+        
+        if (response.data && response.data.result) {
+          setAdStrings(response.data)
+          return response.data
+        } else {
+          throw new Error('Invalid response format')
+        }
+      } catch (error) {
+        console.error('Error fetching ad strings:', error)
+        if (axios.isAxiosError(error)) {
+          setError(error.response?.data?.message || 'Failed to fetch ad content')
+        } else {
+          setError('An unexpected error occurred')
+        }
+        return null
+      }
+    }
+
+    const generateWhatsAppAds = async () => {
+      try {
+        const adData = await fetchAdStrings()
+        
+        if (adData && adData.result) {
+          const mockAds: WhatsAppAd[] = [
+            {
+              businessName: "FitLife Supplements",
+              messageText: adData.result.whatsappString || "No content available",
+              mediaUrl: "https://cdn.vectorstock.com/i/1000v/03/31/whey-protein-powder-ad-poster-vector-47880331.jpg",
+              callToAction: "Shop Now 🛍️"
+            },
+            {
+              businessName: "ProFit Nutrition",
+              messageText: adData.result.reditString || "No content available",
+              mediaUrl: protin,
+              callToAction: "Order Now 🏃‍♂️"
+            },
+            {
+              businessName: "Elite Supplements",
+              messageText: adData.result.twitterString || "No content available",
+              mediaUrl: proteinn,
+              callToAction: "Get Yours 💪"
+            }
+          ]
+          setGeneratedAds(mockAds)
+        }
+      } catch (error) {
+        console.error('Error generating ads:', error)
+        setError('Failed to generate ads')
+      } finally {
+        setLoading(false)
+      }
     }
 
     generateWhatsAppAds()
-  }, [])
+  }, [businessId])
+
+  const handlePublishAll = () => {
+    if (!businessId) {
+      alert('No business ID available')
+      return
+    }
+    navigate('/success', { state: { platform: 'WhatsApp', businessId } })
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-white via-primary-50 to-primary-100 flex items-center justify-center">
+        <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 text-center">
+          <div className="text-red-600 mb-4">Error: {error}</div>
+          <button
+            onClick={() => navigate('/create-ad')}
+            className="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+          >
+            Go Back
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-primary-50 to-primary-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
-          <div className="flex items-center mb-8">
-            <button
-              onClick={() => navigate('/create-ad')}
-              className="mr-4 text-primary-600 hover:text-primary-700"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-            <h1 className="text-3xl font-bold text-gray-900">Create WhatsApp Ad</h1>
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center">
+              <button
+                onClick={() => navigate('/create-ad')}
+                className="mr-4 text-primary-600 hover:text-primary-700"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <h1 className="text-3xl font-bold text-gray-900">Create WhatsApp Ad</h1>
+            </div>
+            
+            {!loading && (
+              <button
+                onClick={handlePublishAll}
+                className="px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200"
+              >
+                Publish All Ads
+              </button>
+            )}
           </div>
 
           {loading ? (
@@ -84,15 +173,6 @@ export default function WhatsAppAdCreation() {
                     <div className="bg-[#25D366] text-white px-4 py-2.5 rounded-full text-center font-medium text-sm hover:bg-[#1ea952] transition-colors cursor-pointer">
                       {ad.callToAction}
                     </div>
-                  </div>
-                  
-                  <div className="mt-4">
-                    <button
-                      onClick={() => navigate('/success', { state: { platform: 'WhatsApp' } })}
-                      className="w-full px-6 py-3 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200"
-                    >
-                      Publish This Ad
-                    </button>
                   </div>
                 </div>
               ))}

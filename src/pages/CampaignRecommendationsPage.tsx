@@ -29,6 +29,14 @@ export default function CampaignRecommendationsPage() {
     fetchStrategy()
   }, [location.state.businessId])
 
+  const handleContinue = () => {
+    navigate('/create-ad', { 
+      state: { 
+        businessId: location.state.businessId
+      } 
+    })
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -49,7 +57,7 @@ export default function CampaignRecommendationsPage() {
 
           <div className="mt-12 flex justify-center">
             <button
-              onClick={() => navigate('/create-ad')}
+              onClick={handleContinue}
               className="px-12 py-6 text-xl font-semibold text-white bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-700 hover:to-primary-600 rounded-xl transform hover:scale-105 transition-all duration-200 shadow-xl hover:shadow-2xl"
             >
               Create Ad Campaign

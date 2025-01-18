@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 interface AdPlatform {
   id: string
@@ -39,20 +39,22 @@ const platforms: AdPlatform[] = [
 
 export default function AdCreationPage() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const businessId = location.state?.businessId
 
   const handlePlatformSelect = (platformId: string) => {
     switch (platformId) {
       case 'google':
-        navigate('/google-ad')
+        navigate('/google-ad', { state: { businessId } })
         break
       case 'twitter':
-        navigate('/twitter-ad')
+        navigate('/twitter-ad', { state: { businessId } })
         break
       case 'reddit':
-        navigate('/reddit-ad')
+        navigate('/reddit-ad', { state: { businessId } })
         break
       case 'whatsapp':
-        navigate('/whatsapp-ad')
+        navigate('/whatsapp-ad', { state: { businessId } })
         break
     }
   }
