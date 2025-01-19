@@ -106,7 +106,7 @@ export default function WhatsAppAdCreation() {
       alert('No business ID available')
       return
     }
-    navigate('/success', { state: { platform: 'WhatsApp', businessId } })
+    navigate('/success', { state: {  businessId: businessId, platform: 'WhatsApp' } })
   }
 
   if (error) {

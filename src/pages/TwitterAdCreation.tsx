@@ -88,7 +88,7 @@ export default function TwitterAdCreation() {
 
               <div className="flex gap-4">
                 <button
-                  onClick={() => navigate('/success', { state: { platform: 'Twitter' } })}
+                  onClick={() => navigate('/newSuccessPage', { state: { platform: 'Twitter Ads', businessId: null } })}
                   className="flex-1 px-6 py-4 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200"
                 >
                   Publish Ad

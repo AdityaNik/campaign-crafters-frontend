@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Bar } from 'react-chartjs-2'
 import {
   Chart as ChartJS,
@@ -30,6 +30,7 @@ export default function AnalyticsPage() {
   const location = useLocation()
   const platform = location.state?.platform || 'Advertisement'
   const [selectedTimeframe, setSelectedTimeframe] = useState('7days')
+  const navigate = useNavigate()
   
   // Mock data for demonstration - replace with actual API call
   const analyticsData: AdAnalytics[] = [
@@ -126,6 +127,13 @@ export default function AnalyticsPage() {
     <div className="min-h-screen bg-gradient-to-br from-white via-primary-50 to-primary-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
+          <button onClick={() => navigate('/create-ad', {
+            state: { 
+              businessId: location?.state?.businessId
+            } 
+          })}>
+            Go back
+          </button>
           <div className="flex items-center justify-between mb-8">
             <h1 className="text-4xl font-bold text-gray-900">{platform} Analytics</h1>
             <select

@@ -10,6 +10,8 @@ import GoogleAdCreation from './pages/GoogleAdCreation'
 import RedditAdCreation from './pages/RedditAdCreation'
 import TwitterAdCreation from './pages/TwitterAdCreation'
 import WhatsAppAdCreation from './pages/WhatsAppAdCreation'
+import UsersAnalytics from './pages/usersAnalytics'
+import NewSuccessPage from './pages/NewSuccessPage'
 
 function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -123,6 +125,8 @@ function App() {
         <Route path="/whatsapp-ad" element={<WhatsAppAdCreation />} />
         <Route path="/success" element={<SuccessPage />} />
         <Route path="/analytics" element={<AnalyticsPage />} />
+        <Route path="/usersAnalytics" element={<UsersAnalytics />} />
+        <Route path='/newSuccessPage' element={<NewSuccessPage />} />
       </Routes>
     </Router>
   )

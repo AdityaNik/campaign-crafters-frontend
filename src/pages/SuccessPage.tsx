@@ -10,7 +10,11 @@ export default function SuccessPage() {
 
   useEffect(() => {
     if (!businessId) {
-      navigate('/whatsapp-ad');
+      navigate('/whatsapp-ad', { 
+        state: { 
+          businessId: location.state.businessId
+        } 
+      });
       return
     }
 
@@ -54,7 +58,11 @@ export default function SuccessPage() {
           </p>
 
           <button
-            onClick={() => navigate('/analytics')}
+            onClick={() => navigate('/usersAnalytics', { 
+              state: { 
+                businessId: location.state.businessId
+              } 
+            })}
             className="px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-700 hover:to-primary-600 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200"
           >
             Show Analytics

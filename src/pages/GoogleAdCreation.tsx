@@ -144,7 +144,7 @@ export default function GoogleAdCreation() {
 
             {generatedImages.length > 0 && generatedImages.every(img => img.imageUrl) && (
               <button
-                onClick={() => navigate('/success', { state: { platform: 'Google Ads', businessId } })}
+                onClick={() => navigate('/newSuccessPage', { state: { platform: 'Google Ads', businessId } })}
                 className="px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200"
               >
                 Publish All Ads
@@ -172,7 +172,7 @@ export default function GoogleAdCreation() {
                         <img 
                           src={image.imageUrl}
                           alt={`Generated Ad ${index + 1}`} 
-                          className="absolute inset-0 w-full h-full object-contain p-6"
+                          className="absolute inset-0 w-fit h-fit object-contain p-6"
                         />
                       </div>
                     ) : (
