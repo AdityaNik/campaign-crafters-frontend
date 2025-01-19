@@ -1,155 +1,192 @@
 import { useState, useEffect } from 'react'
-import { Line } from 'react-chartjs-2'
+import { useLocation } from 'react-router-dom'
+import { Bar } from 'react-chartjs-2'
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
-  PointElement,
-  LineElement,
+  BarElement,
   Title,
   Tooltip,
-  Legend,
+  Legend
 } from 'chart.js'
 
 ChartJS.register(
   CategoryScale,
   LinearScale,
-  PointElement,
-  LineElement,
+  BarElement,
   Title,
   Tooltip,
   Legend
 )
 
-interface AnalyticsData {
-  impressions: number
-  clicks: number
-  engagement: number
-  reach: number
-  ctr: number
-  dailyData: {
-    date: string
-    impressions: number
-    clicks: number
-  }[]
+interface AdAnalytics {
+  adId: string;
+  impressions: number;
+  clicks: number;
 }
 
 export default function AnalyticsPage() {
-  const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null)
-  const [loading, setLoading] = useState(true)
+  const location = useLocation()
+  const platform = location.state?.platform || 'Advertisement'
+  const [selectedTimeframe, setSelectedTimeframe] = useState('7days')
+  
+  // Mock data for demonstration - replace with actual API call
+  const analyticsData: AdAnalytics[] = [
+    {
+      adId: 'Ad 1',
+      impressions: 1500,
+      clicks: 750,
+    },
+    {
+      adId: 'Ad 2',
+      impressions: 2000,
+      clicks: 900,
+    },
+    {
+      adId: 'Ad 3',
+      impressions: 1800,
+      clicks: 820,
+    }
+  ]
 
-  useEffect(() => {
-    const fetchAnalytics = async () => {
-      setLoading(true)
-      try {
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1500))
-        
-        // Mock data
-        setAnalyticsData({
-          impressions: 125000,
-          clicks: 3200,
-          engagement: 4500,
-          reach: 98000,
-          ctr: 2.56,
-          dailyData: Array.from({ length: 7 }, (_, i) => ({
-            date: new Date(Date.now() - (6 - i) * 24 * 60 * 60 * 1000).toLocaleDateString(),
-            impressions: Math.floor(Math.random() * 20000) + 10000,
-            clicks: Math.floor(Math.random() * 500) + 200
-          }))
-        })
-      } finally {
-        setLoading(false)
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'top' as const,
+        labels: {
+          font: {
+            size: 16,
+            weight: 'bold' as const
+          },
+          padding: 20
+        }
+      },
+      title: {
+        display: true,
+        text: `${platform} Performance Analytics`,
+        font: {
+          size: 24,
+          weight: 'bold' as const
+        },
+        padding: 20
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        grid: {
+          color: 'rgba(0, 0, 0, 0.1)'
+        },
+        ticks: {
+          font: {
+            size: 14
+          }
+        }
+      },
+      x: {
+        grid: {
+          display: false
+        },
+        ticks: {
+          font: {
+            size: 16,
+            weight: 'bold' as const
+          }
+        }
       }
     }
-
-    fetchAnalytics()
-  }, [])
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-white via-primary-50 to-primary-100 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary-600 mx-auto mb-4"></div>
-          <h2 className="text-xl font-semibold text-gray-700">Loading Analytics...</h2>
-        </div>
-      </div>
-    )
   }
 
-  if (!analyticsData) return null
-
   const chartData = {
-    labels: analyticsData.dailyData.map(d => d.date),
+    labels: analyticsData.map(data => data.adId),
     datasets: [
       {
         label: 'Impressions',
-        data: analyticsData.dailyData.map(d => d.impressions),
-        borderColor: 'rgb(59, 130, 246)',
-        backgroundColor: 'rgba(59, 130, 246, 0.5)',
+        data: analyticsData.map(data => data.impressions),
+        backgroundColor: 'rgba(53, 162, 235, 0.8)',
+        borderRadius: 6
       },
       {
         label: 'Clicks',
-        data: analyticsData.dailyData.map(d => d.clicks),
-        borderColor: 'rgb(16, 185, 129)',
-        backgroundColor: 'rgba(16, 185, 129, 0.5)',
+        data: analyticsData.map(data => data.clicks),
+        backgroundColor: 'rgba(75, 192, 192, 0.8)',
+        borderRadius: 6
       }
     ]
   }
+
+  const totalImpressions = analyticsData.reduce((sum, data) => sum + data.impressions, 0)
+  const totalClicks = analyticsData.reduce((sum, data) => sum + data.clicks, 0)
+  const averageClickRate = ((totalClicks / totalImpressions) * 100).toFixed(1)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-primary-50 to-primary-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">Campaign Analytics</h1>
+          <div className="flex items-center justify-between mb-8">
+            <h1 className="text-4xl font-bold text-gray-900">{platform} Analytics</h1>
+            <select
+              value={selectedTimeframe}
+              onChange={(e) => setSelectedTimeframe(e.target.value)}
+              className="px-4 py-2 text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            >
+              <option value="7days">Last 7 Days</option>
+              <option value="30days">Last 30 Days</option>
+              <option value="90days">Last 90 Days</option>
+            </select>
+          </div>
 
-          {/* Key Metrics */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            <div className="bg-primary-50 p-6 rounded-xl">
-              <h3 className="text-sm font-medium text-gray-500 mb-1">Total Impressions</h3>
-              <p className="text-2xl font-bold text-gray-900">{analyticsData.impressions.toLocaleString()}</p>
+          {/* Summary Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-shadow">
+              <h3 className="text-base font-medium text-gray-500 mb-2">Total Impressions</h3>
+              <p className="text-3xl font-bold text-gray-900">{totalImpressions.toLocaleString()}</p>
             </div>
-            <div className="bg-green-50 p-6 rounded-xl">
-              <h3 className="text-sm font-medium text-gray-500 mb-1">Total Clicks</h3>
-              <p className="text-2xl font-bold text-gray-900">{analyticsData.clicks.toLocaleString()}</p>
+            <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-shadow">
+              <h3 className="text-base font-medium text-gray-500 mb-2">Total Clicks</h3>
+              <p className="text-3xl font-bold text-gray-900">{totalClicks.toLocaleString()}</p>
             </div>
-            <div className="bg-blue-50 p-6 rounded-xl">
-              <h3 className="text-sm font-medium text-gray-500 mb-1">Total Reach</h3>
-              <p className="text-2xl font-bold text-gray-900">{analyticsData.reach.toLocaleString()}</p>
-            </div>
-            <div className="bg-purple-50 p-6 rounded-xl">
-              <h3 className="text-sm font-medium text-gray-500 mb-1">CTR</h3>
-              <p className="text-2xl font-bold text-gray-900">{analyticsData.ctr}%</p>
+            <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-shadow">
+              <h3 className="text-base font-medium text-gray-500 mb-2">Average Click Rate</h3>
+              <p className="text-3xl font-bold text-gray-900">{averageClickRate}%</p>
             </div>
           </div>
 
           {/* Performance Chart */}
-          <div className="mb-12">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">Performance Over Time</h2>
-            <div className="bg-white p-6 rounded-xl border border-gray-200">
-              <Line
-                data={chartData}
-                options={{
-                  responsive: true,
-                  interaction: {
-                    mode: 'index' as const,
-                    intersect: false,
-                  },
-                  plugins: {
-                    legend: {
-                      position: 'top' as const,
-                    },
-                    title: {
-                      display: false,
-                    }
-                  },
-                  scales: {
-                    y: {
-                      beginAtZero: true
-                    }
-                  }
-                }}
-              />
+          <div className="bg-white p-8 rounded-xl border border-gray-200">
+            <div className="h-[600px]">
+              <Bar data={chartData} options={chartOptions} />
+            </div>
+          </div>
+
+          {/* Individual Ad Performance */}
+          <div className="mt-12">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-6">Individual Ad Performance</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {analyticsData.map((ad) => (
+                <div key={ad.adId} className="bg-white rounded-xl border border-gray-200 p-6">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-4">{ad.adId}</h3>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-lg text-gray-600">Impressions</span>
+                      <span className="text-lg font-medium text-gray-900">{ad.impressions.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-lg text-gray-600">Clicks</span>
+                      <span className="text-lg font-medium text-gray-900">{ad.clicks.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-lg text-gray-600">Click Rate</span>
+                      <span className="text-lg font-medium text-gray-900">
+                        {((ad.clicks / ad.impressions) * 100).toFixed(1)}%
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
